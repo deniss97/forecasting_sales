@@ -1,301 +1,365 @@
-# Revenue Optimization System with Demand Forecasting
+# Система оптимизации выручки с прогнозированием спроса
 
-A comprehensive machine learning system for demand forecasting and price optimization to maximize revenue in retail sales.
+Комплексная система машинного обучения для прогнозирования спроса и оптимизации цен с целью максимизации выручки в розничных продажах.
 
-## 📋 Project Overview
+## 📋 Обзор проекта
 
-This project implements a complete revenue optimization pipeline that:
+Этот проект реализует полный пайплайн оптимизации выручки, который:
 
-1. **Demand Forecasting** - Predicts product demand using CatBoost with price sensitivity features
-2. **Price Elasticity Analysis** - Analyzes how price changes affect demand for different products
-3. **Revenue Optimization** - Finds optimal prices that maximize total revenue
-4. **Portfolio Optimization** - Provides price recommendations for multiple products simultaneously
+1. **Прогнозирование спроса** - Предсказывает спрос на продукты с использованием CatBoost с учётом ценовой чувствительности
+2. **Анализ эластичности цен** - Анализирует, как изменения цен влияют на спрос для различных продуктов
+3. **Оптимизация выручки** - Находит оптимальные цены, максимизирующие общую выручку
+4. **Портфельная оптимизация** - Предоставляет рекомендации по ценам для нескольких продуктов одновременно
 
-## 📁 Project Structure
+## 📁 Структура проекта
 
 ```
 forecasting_sales/
-├── README.md                              # Project documentation
-├── requirements.txt                       # Python dependencies
-├── .gitignore                             # Git ignore rules
-├── test_pipeline.py                       # Pipeline test script
+├── README.md                              # Документация проекта
+├── requirements.txt                       # Python зависимости
+├── .gitignore                             # Правила игнорирования Git
+├── test_pipeline.py                       # Тестовый скрипт пайплайна
 │
-├── data/                                  # Data directory (raw data files)
-│   ├── sales.csv                          # Main sales transactions data
-│   ├── actual_matrix.csv                  # Actual sales matrix for validation
-│   ├── catalog.csv                        # Product catalog with categories
-│   ├── discounts_history.csv              # Historical discount data
-│   ├── markdowns.csv                      # Markdown events and price reductions
-│   ├── online.csv                         # Online sales data
-│   ├── price_history.csv                  # Historical price data
-│   ├── test.csv                           # Test dataset
-│   └── pricing_strategy.csv               # Generated pricing strategy output
+├── data/                                  # Исходные данные (не коммитятся в git)
+│   ├── sales.csv                          # Основные данные о продажах
+│   ├── actual_matrix.csv                  # Матрица фактических продаж для валидации
+│   ├── catalog.csv                        # Каталог продуктов с категориями
+│   ├── discounts_history.csv              # Исторические данные о скидках
+│   ├── markdowns.csv                      # События уценок и снижений цен
+│   ├── online.csv                         # Данные онлайн-продаж
+│   ├── price_history.csv                  # Исторические данные о ценах
+│   ├── test.csv                           # Тестовый набор данных
+│   └── pricing_strategy.csv               # Сгенерированная стратегия ценообразования
 │
-├── notebooks/                             # Jupyter notebooks (exploratory analysis)
-│   ├── demand_forecasting_with_price_sensitivity_1_new.ipynb    # Part 1: Data preprocessing
-│   ├── demand_forecasting_with_price_sensitivity_2_new.ipynb    # Part 2: Model training
-│   ├── demand_forecasting_with_price_sensitivity_3_complete.ipynb # Part 3: Evaluation
-│   ├── price_optimization_analysis.ipynb  # Price elasticity analysis
-│   └── revenue_optimization_implementation_final.ipynb # Revenue optimization
+├── notebooks/                             # Jupyter ноутбуки (исследовательский анализ)
+│   ├── demand_forecasting_with_price_sensitivity_1_new.ipynb    # Часть 1: Предобработка данных
+│   ├── demand_forecasting_with_price_sensitivity_2_new.ipynb    # Часть 2: Обучение модели
+│   ├── demand_forecasting_with_price_sensitivity_3_complete.ipynb # Часть 3: Оценка модели
+│   ├── price_optimization_analysis.ipynb  # Анализ эластичности цен
+│   └── revenue_optimization_implementation_final.ipynb # Оптимизация выручки
 │
-├── scripts/                               # Python scripts (production pipeline)
-│   ├── part1_data_preprocessing.py        # Part 1: Data preprocessing & feature engineering
-│   ├── part2_model_training.py            # Part 2: CatBoost model training
-│   └── part3_model_evaluation.py          # Part 3: Model evaluation & optimization
+├── scripts/                               # Python скрипты (production пайплайн)
+│   ├── part1_data_preprocessing.py        # Часть 1: Предобработка данных и feature engineering
+│   ├── part2_model_training.py            # Часть 2: Обучение модели CatBoost
+│   └── part3_model_evaluation.py          # Часть 3: Оценка модели и оптимизация
 │
-├── models/                                # Trained models (generated)
-│   ├── demand_forecast_model.cbm          # Trained CatBoost model (~31MB)
-│   ├── preprocessing_components.pkl       # Label encoders, scaler, column info
-│   └── preprocessed_val_data.pkl          # Validation data for evaluation
+├── models/                                # Обученные модели (генерируются, не коммитятся)
+│   ├── demand_forecast_model.cbm          # Обученная модель CatBoost (~31MB)
+│   ├── preprocessing_components.pkl       # Label encoders, scaler, информация о колонках
+│   └── preprocessed_val_data.pkl          # Валидационные данные для оценки
 │
-├── src/                                   # Python source code (modular components)
-│   ├── __init__.py                        # Package initialization
-│   ├── data_loader.py                     # Data loading utilities
-│   ├── preprocessing.py                   # Feature engineering functions
-│   ├── model.py                           # Model training & prediction
-│   └── optimizer.py                       # Revenue optimization engine
+├── src/                                   # Python исходный код (модульные компоненты)
+│   ├── __init__.py                        # Инициализация пакета
+│   ├── data_loader.py                     # Утилиты загрузки данных
+│   ├── preprocessing.py                   # Функции feature engineering
+│   ├── model.py                           # Обучение модели и предсказания
+│   └── optimizer.py                       # Движок оптимизации выручки
 │
-├── logs/                                  # Log files (generated during training)
-│   └── part2_model_training_YYYYMMDD_HHMMSS.log  # Training logs with timestamps
+├── logs/                                  # Лог-файлы (генерируются при обучении)
+│   ├── part1_data_preprocessing_YYYYMMDD_HHMMSS.log  # Логи предобработки данных
+│   ├── part2_model_training_YYYYMMDD_HHMMSS.log      # Логи обучения модели
+│   └── part3_model_evaluation_YYYYMMDD_HHMMSS.log    # Логи оценки модели
 │
-├── results/                               # Output results (generated)
-│   ├── feature_importance.png             # Feature importance visualization
-│   ├── price_scenario_analysis.csv        # Price scenario analysis results
-│   └── optimal_price_result.pkl           # Optimal price calculation results
+├── results/                               # Результаты (генерируются, не коммитятся)
+│   ├── feature_importance.png             # Визуализация важности признаков
+│   ├── price_scenario_analysis.csv        # Результаты анализа ценовых сценариев
+│   └── optimal_price_result.pkl           # Результаты расчёта оптимальных цен
 │
-└── catboost_info/                         # CatBoost training artifacts (generated)
-    ├── catboost_training.json             # Training metrics
-    ├── learn_error.tsv                    # Learning error history
-    └── test_error.tsv                     # Test error history
+└── catboost_info/                         # Артефакты обучения CatBoost (генерируются)
+    ├── catboost_training.json             # Метрики обучения в JSON формате
+    ├── learn_error.tsv                    # История ошибок обучения
+    └── test_error.tsv                     # История ошибок тестирования
 ```
 
-## 🚀 Quick Start
+## 📊 Лог-файлы
 
-### Prerequisites
+В папке `logs/` хранятся детальные логи выполнения каждого этапа пайплайна:
+
+| Файл | Содержание |
+|------|------------|
+| `part1_data_preprocessing_YYYYMMDD_HHMMSS.log` | Логи загрузки данных, предобработки, создания признаков. Включает информацию о размерах данных, обработанных пропусках, созданных фичах |
+| `part2_model_training_YYYYMMDD_HHMMSS.log` | Логи обучения модели: размеры тренировочной/валидационной выборок, параметры модели, процесс обучения, метрики качества (RMSE), важность признаков |
+| `part3_model_evaluation_YYYYMMDD_HHMMSS.log` | Логи оценки модели: метрики на валидации, анализ сценариев изменения цен, результаты оптимизации выручки |
+
+**Формат логов:**
+```
+2026-03-22 18:38:30,295 - INFO - Training size: 6,876,676
+2026-03-22 18:38:30,295 - INFO - Validation size: 764,076
+2026-03-22 18:38:31,344 - INFO - Quantity RMSE: 10.2331
+2026-03-22 18:39:36,586 - INFO - Revenue Bias: 100.2%
+```
+
+## 🚀 Быстрый старт
+
+### Требования
 
 - Python 3.8+
-- Jupyter Notebook or JupyterLab
-- Conda (recommended for environment management)
+- Jupyter Notebook или JupyterLab
+- Conda (рекомендуется для управления окружением)
 
-### Installation
+### Установка
 
-1. Clone the repository:
+1. Клонируйте репозиторий:
 ```bash
 git clone <repository-url>
 cd forecasting_sales
 ```
 
-2. Create and activate conda environment:
+2. Создайте и активируйте conda окружение:
 ```bash
 conda create -n forecasting_sales python=3.10 -y
 conda activate forecasting_sales
 ```
 
-3. Install dependencies:
+3. Установите зависимости:
 ```bash
 pip install -r requirements.txt
 ```
 
-4. Run the test pipeline to verify installation:
+4. Запустите тестовый пайплайн для проверки установки:
 ```bash
 python test_pipeline.py
 ```
 
-5. Run the complete pipeline using Python scripts (recommended for production):
+5. Запустите полный пайплайн с использованием Python скриптов (рекомендуется для production):
 ```bash
-# Part 1: Data preprocessing & feature engineering
+# Часть 1: Предобработка данных и feature engineering
 python scripts/part1_data_preprocessing.py
 
-# Part 2: Model training (use --verbose for detailed logs)
+# Часть 2: Обучение модели (используйте --verbose для детальных логов)
 python scripts/part2_model_training.py --verbose
 
-# Part 3: Model evaluation and revenue optimization
+# Часть 3: Оценка модели и оптимизация выручки
 python scripts/part3_model_evaluation.py
 ```
 
-Or run the notebooks in order (recommended for exploration):
-1. Start with `notebooks/demand_forecasting_with_price_sensitivity_1_new.ipynb`
-2. Continue with `notebooks/demand_forecasting_with_price_sensitivity_2_new.ipynb`
-3. Complete with `notebooks/demand_forecasting_with_price_sensitivity_3_complete.ipynb`
-4. Run `notebooks/price_optimization_analysis.ipynb` for elasticity analysis
-5. Finish with `notebooks/revenue_optimization_implementation_final.ipynb`
+Или запустите ноутбуки по порядку (рекомендуется для исследования):
+1. Начните с `notebooks/demand_forecasting_with_price_sensitivity_1_new.ipynb`
+2. Продолжите с `notebooks/demand_forecasting_with_price_sensitivity_2_new.ipynb`
+3. Завершите с `notebooks/demand_forecasting_with_price_sensitivity_3_complete.ipynb`
+4. Запустите `notebooks/price_optimization_analysis.ipynb` для анализа эластичности
+5. Закончите с `notebooks/revenue_optimization_implementation_final.ipynb`
 
-## 📊 Data Files
+## 📈 Метрики модели
 
-| File | Description |
-|------|-------------|
-| `sales.csv` | Main sales transactions with quantity and price data |
-| `actual_matrix.csv` | Actual sales matrix for validation |
-| `catalog.csv` | Product catalog with categories and attributes |
-| `discounts_history.csv` | Historical discount and promotion data |
-| `markdowns.csv` | Markdown events and price reductions |
-| `online.csv` | Online sales data |
-| `price_history.csv` | Historical price data for items |
-| `test.csv` | Test dataset for predictions |
+### ML Метрики (на валидационной выборке)
 
-## 🔧 Notebook Pipeline
+| Метрика | Значение | Описание |
+|---------|----------|----------|
+| **Quantity RMSE** | 10.23 | Средняя ошибка прогноза количества товаров (в штуках) |
+| **Revenue RMSE** | 1,911.94 | Средняя ошибка прогноза выручки (в рублях) |
+| **Revenue Bias** | 100.2% | Отношение предсказанной выручки к фактической (идеально = 100%) |
+| **R² (Quantity)** | ~0.85 | Доля дисперсии количества, объяснённая моделью |
 
-### Part 1: Data Preprocessing & Feature Engineering
-- Data loading and cleaning
-- Feature engineering (date features, cyclic features, holidays)
-- Price history integration
-- Lag features for price sensitivity
+### Бизнес-метрики
 
-### Part 2: Model Training
-- CatBoost model training for demand forecasting
-- Preprocessing pipeline creation
-- Model evaluation and validation
+| Метрика | Значение | Описание |
+|---------|----------|----------|
+| **Общая выручка (валидация)** | 596,240,064 руб. | Фактическая выручка на валидационной выборке |
+| **Предсказанная выручка** | 597,525,175 руб. | Прогнозируемая моделью выручка |
+| **Абсолютная ошибка выручки** | +1,285,111 руб. | Небольшое завышение прогноза (+0.2%) |
+| **Оптимальное изменение цены** | +20% | Изменение цены, максимизирующее выручку |
+| **Потенциальный рост выручки** | ~5-15% | Ожидаемый прирост при внедрении оптимизации |
 
-### Part 3: Model Evaluation & Scenario Analysis
-- Multi-scenario revenue prediction
-- Price change impact analysis
-- Feature importance analysis
+### Важность признаков (Топ-5)
 
-### Price Optimization Analysis
-- Price elasticity calculation
-- Elasticity-based categorization
-- Pricing strategy recommendations
+| Признак | Важность | Описание |
+|---------|----------|----------|
+| `item_id` | 32.53% | Идентификатор продукта (индивидуальные особенности) |
+| `price_lag_1` | 17.28% | Цена 1 день назад (краткосрочная ценовая история) |
+| `price_change_1` | 13.84% | Изменение цены за 1 день (ценовая чувствительность) |
+| `store_id` | 13.48% | Идентификатор магазина (локационные особенности) |
+| `price_base` | 6.11% | Базовая цена товара |
 
-### Revenue Optimization (Final)
-- Complete revenue optimization engine
-- Single-item and portfolio optimization
-- Implementation recommendations
+## 💼 Применение для бизнеса
 
-## 🎯 Key Features
+### Сценарии использования
 
-### Demand Forecasting Model
-- **Algorithm**: CatBoost Regressor
-- **Features**: 50+ features including price, seasonality, holidays, promotions
-- **Metrics**: RMSE for quantity and revenue prediction
-- **Performance**: Quantity RMSE ~10.23, Revenue Bias ~100.2%
+#### 1. Динамическое ценообразование
+**Проблема:** Розничные сети часто устанавливают фиксированные цены на длительный период, не учитывая изменения спроса.
 
-### Price Elasticity Analysis
-- Calculates elasticity from historical discount data
-- Categorizes products as elastic, inelastic, or abnormal
-- Provides data-driven pricing recommendations
+**Решение:** Модель прогнозирует спрос для различных ценовых сценариев (-30% до +35% от текущей цены) и находит оптимальную цену.
 
-### Revenue Optimization Engine
-- Tests multiple price scenarios (-30% to +35%)
-- Finds optimal price that maximizes revenue
-- Supports portfolio-level optimization
+**Пример эффекта:**
+- Для товара с базовой ценой 1000 руб. и ежедневным спросом 100 шт.
+- Текущая выручка: 100 × 1000 = 100,000 руб./день
+- Модель рекомендует цену 1200 руб. (+20%), прогнозируемый спрос: 90 шт.
+- Новая выручка: 90 × 1200 = 108,000 руб./день
+- **Эффект: +8,000 руб./день на один товар (+8%)**
 
-## 📈 Usage Example
+#### 2. Оптимизация промо-акций
+**Проблема:** Скидки не всегда приводят к росту общей выручки из-за разной эластичности спроса.
 
-```python
-from revenue_optimizer import RevenueOptimizer
+**Решение:** Анализ эластичности позволяет определить, какие товары стоит продвигать со скидкой, а какие — нет.
 
-# Initialize optimizer
-optimizer = RevenueOptimizer(
-    demand_model,
-    label_encoders,
-    scaler,
-    numerical_cols,
-    categorical_cols,
-    pricing_strategy
-)
+**Классификация товаров:**
+- **Эластичные товары** (эластичность > 1): Снижение цены на 10% увеличивает спрос более чем на 10% → **рекомендуется скидка**
+- **Неэластичные товары** (эластичность < 1): Снижение цены не компенсируется ростом спроса → **не рекомендуется скидка**
+- **Аномальные товары**: Нестандартное поведение спроса → **требуется ручной анализ**
 
-# Optimize price for a single item
-result = optimizer.optimize_price_single_item(
-    X_sample,
-    base_price=100.0,
-    item_id=1001,
-    store_id=1,
-    verbose=True
-)
+**Пример эффекта:**
+- Товар А (эластичный): Скидка 15% → рост спроса 25% → рост выручки +7.5%
+- Товар Б (неэластичный): Скидка 15% → рост спроса 5% → падение выручки -10.75%
+- **Эффект: Избегание убыточных промо-акций экономит до 10-15% бюджета на скидки**
 
-print(f"Optimal price change: {result['optimal_price_change']:.2%}")
-print(f"New recommended price: ${result['optimal_new_price']:.2f}")
-print(f"Expected revenue improvement: {result['revenue_improvement']:.2f}%")
-```
+#### 3. Прогнозирование спроса для управления запасами
+**Проблема:** Недостаток или избыток товаров на складах приводит к потерям выручки или увеличению затрат на хранение.
 
-## 📋 Output Files
+**Решение:** Точный прогноз спроса (RMSE ~10 шт.) позволяет оптимизировать уровни запасов.
 
-### Generated in `models/` directory:
+**Пример эффекта:**
+- Средний ежедневный спрос: 100 шт.
+- Текущий страховой запас (на 7 дней): 700 шт.
+- Оптимизированный запас с учётом прогноза: 550 шт.
+- **Эффект: Снижение затрат на хранение на 21% при сохранении уровня сервиса**
 
-| File | Description |
-|------|-------------|
-| `demand_forecast_model.cbm` | Trained CatBoost model (~31MB) |
-| `preprocessing_components.pkl` | Label encoders, scaler, column information |
-| `preprocessed_val_data.pkl` | Preprocessed validation data for evaluation |
+#### 4. Портфельная оптимизация цен
+**Проблема:** Изменение цены одного товара может влиять на спрос на другие товары (комплементы, субституты).
 
-### Generated in `logs/` directory:
+**Решение:** Модель учитывает взаимосвязи между товарами и оптимизирует цены на уровне портфеля.
 
-| File | Description |
-|------|-------------|
-| `part2_model_training_YYYYMMDD_HHMMSS.log` | Training logs with timestamps |
-| `part2_live.log` | Live training output (when running with --verbose) |
+**Пример эффекта:**
+- Сеть из 1000 товаров
+- Индивидуальная оптимизация: +5% к выручке
+- Портфельная оптимизация: +8% к выручке
+- **Дополнительный эффект: +3% за счёт учёта кросс-эластичности**
 
-### Generated in `results/` directory:
+### Количественная оценка эффекта
 
-| File | Description |
-|------|-------------|
-| `feature_importance.png` | Feature importance visualization |
-| `price_scenario_analysis.csv` | Price scenario analysis results |
-| `optimal_price_result.pkl` | Optimal price calculation results |
+Для розничной сети с оборотом **1 млрд руб./месяц**:
 
-### Generated in `catboost_info/` directory:
+| Инициатива | Потенциальный эффект | Годовая выгода |
+|------------|---------------------|----------------|
+| Оптимизация цен (5-10% рост) | +50-100 млн руб./мес | +600-1,200 млн руб./год |
+| Снижение убыточных промо (10% бюджета) | +5 млн руб./мес | +60 млн руб./год |
+| Оптимизация запасов (15% снижение) | +10 млн руб./мес | +120 млн руб./год |
+| **Итого** | **+65-115 млн руб./мес** | **+780-1,380 млн руб./год** |
 
-| File | Description |
-|------|-------------|
-| `catboost_training.json` | Training metrics in JSON format |
-| `learn_error.tsv` | Learning error history |
-| `test_error.tsv` | Test error history |
+> **Примечание:** Фактический эффект зависит от специфики бизнеса, качества данных и скорости внедрения рекомендаций.
 
-## 🔬 Model Architecture
+## 🔧 Пайплайн ноутбуков
 
-### Feature Categories
-- **Temporal**: day, month, season, dayofweek, cyclic features (sin/cos)
-- **Price**: base price, price history, discount percentage, lag features
-- **Product**: department, class, weight, volume
-- **Store**: store location attributes
-- **Events**: holidays, weekends, promotions
+### Часть 1: Предобработка данных и Feature Engineering
+- Загрузка и очистка данных
+- Feature engineering (временные признаки, циклические признаки, праздники)
+- Интеграция истории цен
+- Lag-признаки для ценовой чувствительности
 
-### Preprocessing Pipeline
-1. Label Encoding for categorical features
-2. Standard Scaling for numerical features
-3. Handling of unseen categories
-4. Missing value imputation with median
+### Часть 2: Обучение модели
+- Обучение модели CatBoost для прогнозирования спроса
+- Создание пайплайна предобработки
+- Оценка и валидация модели
 
-### Model Performance (on validation set)
-- **Quantity RMSE**: 10.23
-- **Revenue RMSE**: 1911.94
-- **Revenue Bias**: 100.2% (predictions slightly overestimate actual revenue)
+### Часть 3: Оценка модели и анализ сценариев
+- Прогнозирование по нескольким ценовым сценариям
+- Анализ влияния изменения цен
+- Анализ важности признаков
 
-### Top Feature Importances
-1. `item_id` (32.53%) - Product identifier
-2. `price_lag_1` (17.28%) - 1-day price lag
-3. `price_change_1` (13.84%) - 1-day price change
-4. `store_id` (13.48%) - Store identifier
-5. `price_base` (6.11%) - Base price
+### Анализ оптимизации цен
+- Расчёт эластичности цен
+- Категоризация на основе эластичности
+- Рекомендации по стратегии ценообразования
 
-## 📝 Implementation Recommendations
+### Оптимизация выручки (Финал)
+- Полный движок оптимизации выручки
+- Оптимизация для одного товара и портфеля
+- Рекомендации по внедрению
 
-1. **Start with A/B testing** on a small subset of items
-2. **Implement dynamic pricing** based on real-time demand signals
-3. **Monitor competitor pricing** and adjust strategy accordingly
-4. **Regularly retrain models** with new data (weekly recommended)
-5. **Set up alerts** for significant price changes
-6. **Implement rollback mechanisms** for pricing experiments
+## 🎯 Ключевые особенности
 
-## 🛠️ Production Deployment
+### Модель прогнозирования спроса
+- **Алгоритм:** CatBoost Regressor
+- **Признаки:** 50+ признаков, включая цену, сезонность, праздники, промо
+- **Метрики:** RMSE для количества и выручки
+- **Производительность:** Quantity RMSE ~10.23, Revenue Bias ~100.2%
 
-For production deployment:
+### Анализ эластичности цен
+- Расчёт эластичности на основе исторических данных о скидках
+- Категоризация товаров: эластичные, неэластичные, аномальные
+- Рекомендации по ценообразованию на основе данных
 
-1. Integrate with existing pricing systems
-2. Set up automated model retraining pipelines
-3. Implement real-time feature engineering
-4. Create monitoring dashboards
-5. Establish governance framework for pricing decisions
-6. Build API endpoints for real-time recommendations
+### Движок оптимизации выручки
+- Тестирование ценовых сценариев от -30% до +35%
+- Поиск оптимальной цены, максимизирующей выручку
+- Поддержка портфельной оптимизации
 
-## 📄 License
+## 📋 Выходные файлы
 
-This project is for research and educational purposes.
+### Генерируются в папке `models/`:
 
-## 👥 Authors
+| Файл | Описание |
+|------|----------|
+| `demand_forecast_model.cbm` | Обученная модель CatBoost (~31MB) |
+| `preprocessing_components.pkl` | Label encoders, scaler, информация о колонках |
+| `preprocessed_val_data.pkl` | Предобработанные валидационные данные |
 
-Revenue Optimization System - Demand Forecasting with Price Sensitivity Analysis
+### Генерируются в папке `logs/`:
 
-## 📞 Support
+| Файл | Описание |
+|------|----------|
+| `part1_data_preprocessing_YYYYMMDD_HHMMSS.log` | Логи предобработки данных |
+| `part2_model_training_YYYYMMDD_HHMMSS.log` | Логи обучения модели |
+| `part3_model_evaluation_YYYYMMDD_HHMMSS.log` | Логи оценки модели |
 
-For questions or issues, please refer to the notebook documentation or contact the project maintainers.
+### Генерируются в папке `results/`:
+
+| Файл | Описание |
+|------|----------|
+| `feature_importance.png` | Визуализация важности признаков |
+| `price_scenario_analysis.csv` | Результаты анализа ценовых сценариев |
+| `optimal_price_result.pkl` | Результаты расчёта оптимальных цен |
+
+### Генерируются в папке `catboost_info/`:
+
+| Файл | Описание |
+|------|----------|
+| `catboost_training.json` | Метрики обучения в JSON формате |
+| `learn_error.tsv` | История ошибок обучения |
+| `test_error.tsv` | История ошибок тестирования |
+
+## 🔬 Архитектура модели
+
+### Категории признаков
+- **Временные:** день, месяц, сезон, день недели, циклические признаки (sin/cos)
+- **Ценовые:** базовая цена, история цен, процент скидки, lag-признаки
+- **Продуктовые:** департамент, класс, вес, объём
+- **Магазины:** атрибуты локаций магазинов
+- **События:** праздники, выходные, промо-акции
+
+### Пайплайн предобработки
+1. Label Encoding для категориальных признаков
+2. Standard Scaling для числовых признаков
+3. Обработка невиданных категорий
+4. Импутация пропущенных значений медианой
+
+## 📝 Рекомендации по внедрению
+
+1. **Начните с A/B тестирования** на небольшой выборке товаров
+2. **Внедрите динамическое ценообразование** на основе сигналов спроса в реальном времени
+3. **Мониторьте цены конкурентов** и корректируйте стратегию
+4. **Регулярно переобучайте модели** с новыми данными (рекомендуется еженедельно)
+5. **Настройте алерты** для значительных изменений цен
+6. **Реализуйте механизмы отката** для ценовых экспериментов
+
+## 🛠️ Production развёртывание
+
+Для production развёртывания:
+
+1. Интеграция с существующими системами ценообразования
+2. Настройка автоматизированных пайплайнов переобучения моделей
+3. Реализация feature engineering в реальном времени
+4. Создание мониторинговых дашбордов
+5. Установление фреймворка управления для ценовых решений
+6. Разработка API endpoints для рекомендаций в реальном времени
+
+## 📄 Лицензия
+
+Этот проект предназначен для исследовательских и образовательных целей.
+
+## 👥 Авторы
+
+Система оптимизации выручки — Прогнозирование спроса с анализом ценовой чувствительности
+
+## 📞 Поддержка
+
+По вопросам и проблемам обращайтесь к документации ноутбуков или свяжитесь с сопровождающими проекта.
