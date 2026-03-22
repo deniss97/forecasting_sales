@@ -17,34 +17,36 @@ This project implements a complete revenue optimization pipeline that:
 forecasting_sales/
 ├── README.md                              # Project documentation
 ├── requirements.txt                       # Python dependencies
-├── data/                                  # Data directory (if separated)
-│   ├── sales.csv                         # Historical sales data
-│   ├── online.csv                        # Online sales data
-│   ├── catalog.csv                       # Product catalog
-│   ├── stores.csv                        # Store information
-│   ├── discounts_history.csv             # Historical discount data
-│   ├── markdowns.csv                     # Markdown events
-│   ├── price_history.csv                 # Historical prices
-│   ├── actual_matrix.csv                 # Actual sales matrix
-│   └── test.csv                          # Test dataset
-├── notebooks/                             # Jupyter notebooks (recommended structure)
-│   ├── 01_demand_forecasting_part1.ipynb  # Data preprocessing & feature engineering
-│   ├── 02_demand_forecasting_part2.ipynb  # Model training
-│   ├── 03_demand_forecasting_part3.ipynb  # Model evaluation & scenario analysis
-│   ├── 04_price_optimization_analysis.ipynb # Price elasticity analysis
-│   └── 05_revenue_optimization_final.ipynb # Complete revenue optimization
-├── models/                                # Trained models directory
-│   ├── demand_forecast_model.cbm         # Trained CatBoost model
-│   ├── preprocessing_components.pkl      # Preprocessing pipeline
-│   └── revenue_optimizer.pkl             # Revenue optimizer instance
-├── src/                                   # Source code (for production)
-│   ├── data_loader.py                    # Data loading utilities
-│   ├── preprocessing.py                  # Feature engineering
-│   ├── model.py                          # Model training & prediction
-│   └── optimizer.py                      # Revenue optimization engine
-└── results/                               # Output results
-    ├── pricing_strategy.csv              # Optimal pricing recommendations
-    └── revenue_optimization_results.csv  # Optimization results
+├── .gitignore                             # Git ignore rules
+├── data/                                  # Data directory
+│   ├── actual_matrix.csv                  # Actual sales matrix
+│   ├── catalog.csv                        # Product catalog
+│   ├── discounts_history.csv              # Historical discount data
+│   ├── markdowns.csv                      # Markdown events
+│   ├── online.csv                         # Online sales data
+│   ├── sales.csv                          # Historical sales data (if available)
+│   ├── stores.csv                         # Store information (if available)
+│   ├── price_history.csv                  # Historical prices (if available)
+│   └── test.csv                           # Test dataset (if available)
+├── notebooks/                             # Jupyter notebooks
+│   ├── demand_forecasting_with_price_sensitivity_1_new.ipynb    # Part 1: Data preprocessing
+│   ├── demand_forecasting_with_price_sensitivity_2_new.ipynb    # Part 2: Model training
+│   ├── demand_forecasting_with_price_sensitivity_3_complete.ipynb # Part 3: Evaluation
+│   ├── price_optimization_analysis.ipynb  # Price elasticity analysis
+│   └── revenue_optimization_implementation_final.ipynb # Revenue optimization
+├── models/                                # Trained models (generated)
+│   ├── demand_forecast_model.cbm          # Trained CatBoost model
+│   ├── preprocessing_components.pkl       # Preprocessing pipeline
+│   └── revenue_optimizer.pkl              # Revenue optimizer instance
+├── src/                                   # Python source code
+│   ├── __init__.py                        # Package initialization
+│   ├── data_loader.py                     # Data loading utilities
+│   ├── preprocessing.py                   # Feature engineering
+│   ├── model.py                           # Model training & prediction
+│   └── optimizer.py                       # Revenue optimization engine
+└── results/                               # Output results (generated)
+    ├── pricing_strategy.csv               # Optimal pricing recommendations
+    └── revenue_optimization_results.csv   # Optimization results
 ```
 
 ## 🚀 Quick Start
