@@ -64,17 +64,33 @@ git clone <repository-url>
 cd forecasting_sales
 ```
 
-2. Install dependencies:
+2. Create and activate virtual environment (recommended):
+```bash
+# Using conda
+conda create -n forecasting python=3.10
+conda activate forecasting
+
+# Or using venv
+python -m venv venv
+source venv/bin/activate  # On macOS/Linux
+```
+
+3. Install dependencies:
 ```bash
 pip install -r requirements.txt
 ```
 
-3. Run the notebooks in order:
-   - Start with `demand_forecasting_with_price_sensitivity_1_new.ipynb`
-   - Continue with `demand_forecasting_with_price_sensitivity_2_new.ipynb`
-   - Complete with `demand_forecasting_with_price_sensitivity_3_complete.ipynb`
-   - Run `price_optimization_analysis.ipynb` for elasticity analysis
-   - Finish with `revenue_optimization_implementation_final.ipynb`
+4. Run the test pipeline to verify installation:
+```bash
+python test_pipeline.py
+```
+
+5. Run the notebooks in order:
+   - Start with `notebooks/demand_forecasting_with_price_sensitivity_1_new.ipynb`
+   - Continue with `notebooks/demand_forecasting_with_price_sensitivity_2_new.ipynb`
+   - Complete with `notebooks/demand_forecasting_with_price_sensitivity_3_complete.ipynb`
+   - Run `notebooks/price_optimization_analysis.ipynb` for elasticity analysis
+   - Finish with `notebooks/revenue_optimization_implementation_final.ipynb`
 
 ## 📊 Data Files
 
