@@ -10,7 +10,7 @@ This project implements a complete revenue optimization pipeline that:
 2. **Price Elasticity Analysis** - Analyzes how price changes affect demand for different products
 3. **Revenue Optimization** - Finds optimal prices that maximize total revenue
 4. **Portfolio Optimization** - Provides price recommendations for multiple products simultaneously
- 
+
 ## 📁 Project Structure
 
 ```
@@ -18,35 +18,55 @@ forecasting_sales/
 ├── README.md                              # Project documentation
 ├── requirements.txt                       # Python dependencies
 ├── .gitignore                             # Git ignore rules
-├── data/                                  # Data directory
-│   ├── actual_matrix.csv                  # Actual sales matrix
-│   ├── catalog.csv                        # Product catalog
+├── test_pipeline.py                       # Pipeline test script
+│
+├── data/                                  # Data directory (raw data files)
+│   ├── sales.csv                          # Main sales transactions data
+│   ├── actual_matrix.csv                  # Actual sales matrix for validation
+│   ├── catalog.csv                        # Product catalog with categories
 │   ├── discounts_history.csv              # Historical discount data
-│   ├── markdowns.csv                      # Markdown events
+│   ├── markdowns.csv                      # Markdown events and price reductions
 │   ├── online.csv                         # Online sales data
-│   ├── sales.csv                          # Historical sales data (if available)
-│   ├── stores.csv                         # Store information (if available)
-│   ├── price_history.csv                  # Historical prices (if available)
-│   └── test.csv                           # Test dataset (if available)
-├── notebooks/                             # Jupyter notebooks
+│   ├── price_history.csv                  # Historical price data
+│   ├── test.csv                           # Test dataset
+│   └── pricing_strategy.csv               # Generated pricing strategy output
+│
+├── notebooks/                             # Jupyter notebooks (exploratory analysis)
 │   ├── demand_forecasting_with_price_sensitivity_1_new.ipynb    # Part 1: Data preprocessing
 │   ├── demand_forecasting_with_price_sensitivity_2_new.ipynb    # Part 2: Model training
 │   ├── demand_forecasting_with_price_sensitivity_3_complete.ipynb # Part 3: Evaluation
 │   ├── price_optimization_analysis.ipynb  # Price elasticity analysis
 │   └── revenue_optimization_implementation_final.ipynb # Revenue optimization
+│
+├── scripts/                               # Python scripts (production pipeline)
+│   ├── part1_data_preprocessing.py        # Part 1: Data preprocessing & feature engineering
+│   ├── part2_model_training.py            # Part 2: CatBoost model training
+│   └── part3_model_evaluation.py          # Part 3: Model evaluation & optimization
+│
 ├── models/                                # Trained models (generated)
-│   ├── demand_forecast_model.cbm          # Trained CatBoost model
-│   ├── preprocessing_components.pkl       # Preprocessing pipeline
-│   └── revenue_optimizer.pkl              # Revenue optimizer instance
-├── src/                                   # Python source code
+│   ├── demand_forecast_model.cbm          # Trained CatBoost model (~31MB)
+│   ├── preprocessing_components.pkl       # Label encoders, scaler, column info
+│   └── preprocessed_val_data.pkl          # Validation data for evaluation
+│
+├── src/                                   # Python source code (modular components)
 │   ├── __init__.py                        # Package initialization
 │   ├── data_loader.py                     # Data loading utilities
-│   ├── preprocessing.py                   # Feature engineering
+│   ├── preprocessing.py                   # Feature engineering functions
 │   ├── model.py                           # Model training & prediction
 │   └── optimizer.py                       # Revenue optimization engine
-└── results/                               # Output results (generated)
-    ├── pricing_strategy.csv               # Optimal pricing recommendations
-    └── revenue_optimization_results.csv   # Optimization results
+│
+├── logs/                                  # Log files (generated during training)
+│   └── part2_model_training_YYYYMMDD_HHMMSS.log  # Training logs with timestamps
+│
+├── results/                               # Output results (generated)
+│   ├── feature_importance.png             # Feature importance visualization
+│   ├── price_scenario_analysis.csv        # Price scenario analysis results
+│   └── optimal_price_result.pkl           # Optimal price calculation results
+│
+└── catboost_info/                         # CatBoost training artifacts (generated)
+    ├── catboost_training.json             # Training metrics
+    ├── learn_error.tsv                    # Learning error history
+    └── test_error.tsv                     # Test error history
 ```
 
 ## 🚀 Quick Start
@@ -55,6 +75,7 @@ forecasting_sales/
 
 - Python 3.8+
 - Jupyter Notebook or JupyterLab
+- Conda (recommended for environment management)
 
 ### Installation
 
@@ -64,15 +85,10 @@ git clone <repository-url>
 cd forecasting_sales
 ```
 
-2. Create and activate virtual environment (recommended):
+2. Create and activate conda environment:
 ```bash
-# Using conda
-conda create -n forecasting python=3.10
-conda activate forecasting
-
-# Or using venv
-python -m venv venv
-source venv/bin/activate  # On macOS/Linux
+conda create -n forecasting_sales python=3.10 -y
+conda activate forecasting_sales
 ```
 
 3. Install dependencies:
@@ -85,26 +101,37 @@ pip install -r requirements.txt
 python test_pipeline.py
 ```
 
-5. Run the notebooks in order:
-   - Start with `notebooks/demand_forecasting_with_price_sensitivity_1_new.ipynb`
-   - Continue with `notebooks/demand_forecasting_with_price_sensitivity_2_new.ipynb`
-   - Complete with `notebooks/demand_forecasting_with_price_sensitivity_3_complete.ipynb`
-   - Run `notebooks/price_optimization_analysis.ipynb` for elasticity analysis
-   - Finish with `notebooks/revenue_optimization_implementation_final.ipynb`
+5. Run the complete pipeline using Python scripts (recommended for production):
+```bash
+# Part 1: Data preprocessing & feature engineering
+python scripts/part1_data_preprocessing.py
+
+# Part 2: Model training (use --verbose for detailed logs)
+python scripts/part2_model_training.py --verbose
+
+# Part 3: Model evaluation and revenue optimization
+python scripts/part3_model_evaluation.py
+```
+
+Or run the notebooks in order (recommended for exploration):
+1. Start with `notebooks/demand_forecasting_with_price_sensitivity_1_new.ipynb`
+2. Continue with `notebooks/demand_forecasting_with_price_sensitivity_2_new.ipynb`
+3. Complete with `notebooks/demand_forecasting_with_price_sensitivity_3_complete.ipynb`
+4. Run `notebooks/price_optimization_analysis.ipynb` for elasticity analysis
+5. Finish with `notebooks/revenue_optimization_implementation_final.ipynb`
 
 ## 📊 Data Files
 
 | File | Description |
 |------|-------------|
-| `sales.csv` | Historical offline sales data |
-| `online.csv` | Historical online sales data |
-| `catalog.csv` | Product catalog with categories |
-| `stores.csv` | Store locations and attributes |
-| `discounts_history.csv` | Historical discount and promotion data |
-| `price_history.csv` | Historical price changes |
-| `markdowns.csv` | Markdown events |
-| `test.csv` | Test dataset for predictions |
+| `sales.csv` | Main sales transactions with quantity and price data |
 | `actual_matrix.csv` | Actual sales matrix for validation |
+| `catalog.csv` | Product catalog with categories and attributes |
+| `discounts_history.csv` | Historical discount and promotion data |
+| `markdowns.csv` | Markdown events and price reductions |
+| `online.csv` | Online sales data |
+| `price_history.csv` | Historical price data for items |
+| `test.csv` | Test dataset for predictions |
 
 ## 🔧 Notebook Pipeline
 
@@ -140,6 +167,7 @@ python test_pipeline.py
 - **Algorithm**: CatBoost Regressor
 - **Features**: 50+ features including price, seasonality, holidays, promotions
 - **Metrics**: RMSE for quantity and revenue prediction
+- **Performance**: Quantity RMSE ~10.23, Revenue Bias ~100.2%
 
 ### Price Elasticity Analysis
 - Calculates elasticity from historical discount data
@@ -182,20 +210,41 @@ print(f"Expected revenue improvement: {result['revenue_improvement']:.2f}%")
 
 ## 📋 Output Files
 
-After running the complete pipeline:
+### Generated in `models/` directory:
 
 | File | Description |
 |------|-------------|
-| `demand_forecast_model.cbm` | Trained CatBoost model |
-| `preprocessing_components.pkl` | Label encoders, scaler, column info |
-| `pricing_strategy.csv` | Elasticity-based pricing recommendations |
-| `revenue_optimization_results.csv` | Final optimization results |
-| `revenue_optimizer.pkl` | Serialized optimizer instance |
+| `demand_forecast_model.cbm` | Trained CatBoost model (~31MB) |
+| `preprocessing_components.pkl` | Label encoders, scaler, column information |
+| `preprocessed_val_data.pkl` | Preprocessed validation data for evaluation |
+
+### Generated in `logs/` directory:
+
+| File | Description |
+|------|-------------|
+| `part2_model_training_YYYYMMDD_HHMMSS.log` | Training logs with timestamps |
+| `part2_live.log` | Live training output (when running with --verbose) |
+
+### Generated in `results/` directory:
+
+| File | Description |
+|------|-------------|
+| `feature_importance.png` | Feature importance visualization |
+| `price_scenario_analysis.csv` | Price scenario analysis results |
+| `optimal_price_result.pkl` | Optimal price calculation results |
+
+### Generated in `catboost_info/` directory:
+
+| File | Description |
+|------|-------------|
+| `catboost_training.json` | Training metrics in JSON format |
+| `learn_error.tsv` | Learning error history |
+| `test_error.tsv` | Test error history |
 
 ## 🔬 Model Architecture
 
 ### Feature Categories
-- **Temporal**: day, month, season, dayofweek, cyclic features
+- **Temporal**: day, month, season, dayofweek, cyclic features (sin/cos)
 - **Price**: base price, price history, discount percentage, lag features
 - **Product**: department, class, weight, volume
 - **Store**: store location attributes
@@ -205,13 +254,26 @@ After running the complete pipeline:
 1. Label Encoding for categorical features
 2. Standard Scaling for numerical features
 3. Handling of unseen categories
+4. Missing value imputation with median
+
+### Model Performance (on validation set)
+- **Quantity RMSE**: 10.23
+- **Revenue RMSE**: 1911.94
+- **Revenue Bias**: 100.2% (predictions slightly overestimate actual revenue)
+
+### Top Feature Importances
+1. `item_id` (32.53%) - Product identifier
+2. `price_lag_1` (17.28%) - 1-day price lag
+3. `price_change_1` (13.84%) - 1-day price change
+4. `store_id` (13.48%) - Store identifier
+5. `price_base` (6.11%) - Base price
 
 ## 📝 Implementation Recommendations
 
 1. **Start with A/B testing** on a small subset of items
 2. **Implement dynamic pricing** based on real-time demand signals
 3. **Monitor competitor pricing** and adjust strategy accordingly
-4. **Regularly retrain models** with new data
+4. **Regularly retrain models** with new data (weekly recommended)
 5. **Set up alerts** for significant price changes
 6. **Implement rollback mechanisms** for pricing experiments
 

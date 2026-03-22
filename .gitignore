@@ -43,6 +43,23 @@ ENV/
 *.cbm
 *.pkl
 
+# Models directory (generated files)
+models/*.cbm
+models/*.pkl
+!models/.gitkeep
+
+# Results directory (generated files)
+results/*.csv
+results/*.png
+results/*.pkl
+!results/.gitkeep
+
+# CatBoost info
+catboost_info/
+
+# Logs directory
+logs/*.log
+
 # Data files (too large for git)
 data/*.csv
 !data/.gitkeep
@@ -53,6 +70,15 @@ stores.csv
 price_history.csv
 test.csv
 sample_submission.csv
+actual_matrix.csv
+catalog.csv
+discounts_history.csv
+markdowns.csv
+online.csv
+pricing_strategy.csv
+
+# Pickle files in root
+*.pkl
 
 # OS
 .DS_Store
